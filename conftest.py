@@ -9,30 +9,7 @@ LOG_DIR = ROOT / "logs"
 SCREENSHOT_DIR = ROOT / "screenshots"
 REPORT_DIR = ROOT / "reports"
 
-def pytest_addoption(parser):
-    parser.addoption(
-        "--browser",
-        action="store",
-        default="chromium",
-        help="Browser: chromium, firefox, webkit"
-    )
 
-@pytest.fixture
-def browser(playwright_instance, request):
-
-    browser_name = request.config.getoption("--browser")
-
-    browser = getattr(playwright_instance, browser_name).launch(
-        headless=False
-    )
-
-    context = browser.new_context()
-
-    yield context
-
-    context.close()
-    browser.close()
-    
 @pytest.fixture(scope="session")
 def browser_context_args():
     return {
@@ -49,7 +26,7 @@ def playwright_instance():
 
 @pytest.fixture
 def browser(playwright_instance, browser_context_args):
-    browser = playwright_instance.chromium.launch(headless=False,slow_mo=500)
+    browser = playwright_instance.chromium.launch(headless=True,slow_mo=500)
     context = browser.new_context(**browser_context_args)
     yield context
     context.close()
